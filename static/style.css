@@ -47,7 +47,7 @@ body {
 
         #table_type,
         #table_single_selection,
-        #table_multi_selection {
+        #table_multi_selection, #select_num_rows {
             padding: 10px;
             font-size: 18px;
             border: 1px solid black;
@@ -230,13 +230,14 @@ body {
     }
 }
 
-.metadata-btn{
+.metadata-btn, #eval-logs-btn{
     background-color: #00246B;
     border: none;
     color: white;
     padding: 15px 20px;
+    margin: 3px;
 }
-#metadata {
+#metadata{
     display: none;
     .img-container{
         display: flex;
@@ -247,6 +248,22 @@ body {
             margin-top: 5px;
         }
     }
+}
+
+#evaluation_logs{
+    #logs{
+        display: none;
+        max-width: 60%;
+        width: fit-content;
+        max-height: 26rem;
+        height: max-content;
+        background-color: #00246B;
+        color: #FFF;
+        font-size: var(--xs-font);
+        overflow: scroll;
+        margin: auto;
+        padding: 30px;
+    } 
 }
 
 .diagnostic_reports {
@@ -260,6 +277,7 @@ body {
     justify-content: center;
     margin: 50px auto;
     .diag_reports {
+        width: 80%;
         margin: 10px;
         border-collapse: collapse;
         font-size: var(--sm-font);
@@ -268,7 +286,7 @@ body {
                 border: 1px solid #f7a570;
             }
             td:nth-child(1){
-                color: rgb(63, 60, 60);
+                color: rgb(37, 34, 34);
                 font-weight: 600;
             }
         }
@@ -289,6 +307,7 @@ body {
     justify-content: center;
     margin: 50px auto;
     .eval_reports {
+        width: 80%;
         margin: 10px;
         border-collapse: collapse;
         font-size: var(--xs-font);
@@ -296,8 +315,11 @@ body {
             tr {
                 th {
                     border: 1px solid #f7a570;
-                    color: rgb(63, 60, 60);
+                    color: rgb(29, 28, 28);
                 }
+            }
+            tr:hover{
+                background-color: #f7a570;
             }
         }
 
@@ -307,10 +329,17 @@ body {
                     border: 1px solid #f7a570;
                 }
                 td:nth-child(1){
-                    color: rgb(63, 60, 60);
+                    color: rgb(36, 34, 34);
                     font-weight: 600;
                 }
             }
+            tr:hover{
+                background-color: #f7a570;
+            }
+        }
+        th, td{
+            padding: 5px;
+            text-align: center;
         }
     }
 }

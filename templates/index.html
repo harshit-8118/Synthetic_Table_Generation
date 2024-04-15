@@ -34,16 +34,24 @@
           <option value="walmart">walmart</option>
           <option value="world_v1">world_v1</option>
         </select>
+        <select name="select_num_rows" id="select_num_rows">
+          <option value=100 selected>Rows amount</option>
+          <option value=100>100</option>
+          <option value=500>500</option>
+          <option value=1000>1000</option>
+          <option value=2000>2000</option>
+          <option value=10000>10000</option>
+        </select>
         <input type="submit" value="SUBMIT" />
       </form>
     </div>
 
     <div class="demo_tables">
-      {% if type_table_name and demo_table and type_table_name['table_type'] ==
+      {% if data and demo_table and data['table_type'] ==
       'single_table' %}
 
       <h2 class="table-type">Real Table</h2>
-      <h2 class="heading-h2">{{type_table_name['table_name']}}.csv</h2>
+      <h2 class="heading-h2">{{data['table_name']}}.csv</h2>
       <div class="demo_table_single">
         <table class="demo_table">
           <thead>
@@ -66,7 +74,7 @@
           </tbody>
         </table>
       </div>
-      {% elif type_table_name and demo_table and type_table_name['table_type']
+      {% elif data and demo_table and data['table_type']
       == 'multi_table' %}
       <h2 class="table-type">Multi Table</h2>
       {% for table in demo_table.keys() %}
@@ -97,10 +105,10 @@
     </div>
 
     <div class="synthetic_tables_container">
-      {% if type_table_name and synthetic_table and
-      type_table_name['table_type'] == 'single_table' %}
+      {% if data and synthetic_table and
+      data['table_type'] == 'single_table' %}
       <h2 class="table-type">Synthetic Generated Table</h2>
-      <h2 class="heading-h2">{{type_table_name['table_name']}}.csv</h2>
+      <h2 class="heading-h2">{{data['table_name']}}.csv</h2>
       <div class="synthetic_table_single">
         <table border="1" class="synthetic_table">
           <thead>
@@ -126,11 +134,22 @@
           </tbody>
         </table>
       </div>
-      {% elif type_table_name and synthetic_table and
-      type_table_name['table_type'] == 'multi_table' %}
+      {% elif data and synthetic_table and
+      data['table_type'] == 'multi_table' %}
       <div class="synthetic_table_multi"></div>
       {% endif %}
     </div>
+
+    <div id="evaluation_logs">
+      {% if eval_logs %}
+      <button id="eval-logs-btn" onclick="eval_log_toggle()">LOGS</button>
+      <div id="logs">
+        {% for log in eval_logs %}
+        <p>{{ log }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>  
     {% if metadata %}
     <button class="metadata-btn" onclick="metadata_toggle()">
       METADATA
@@ -142,6 +161,32 @@
         <img src="static/my_metadata_summarized.png" alt="summary.png" />
         <img src="static/my_metadata_full.png" alt="full.png" />
       </div>
+      {%endif%}
+    </div>
+    <div class="evaluation_reports">
+      {% if eval_reports %}
+      <h2 class="table-type">Evaluation Report</h2>
+      <h2 class="heading-h2">Best Synthesizer: {{ data['model'] }}</h2>
+      <table border="1" class="eval_reports">
+        <thead>
+          <tr>
+            {% for k in eval_reports[0].keys() %}
+            <th>{{k}}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in eval_reports %}
+          <tr>
+            {% for v in i.values() %}
+            <td>
+              {{ v }}
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
       {%endif%}
     </div>
     <div class="diagnostic_reports">
@@ -157,31 +202,6 @@
       </table>
       {%endif%}
     </div>
-    <div class="evaluation_reports">
-      {% if eval_reports %}
-      <table border="1" class="eval_reports">
-        <thead>
-          <tr>
-            {% for k in eval_reports[0].keys() %} {% if k != "Metric" %}
-            <th>{{k}}</th>
-            {% endif %} {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for i in eval_reports %}
-          <tr>
-            {% for v in i.values() %} {% if v != 'TVComplement' %}
-            <td>
-              {{ v }}
-            </td>
-            {% endif %} {% endfor %}
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {%endif%}
-    </div>
-
     <script src="static/index.js"></script>
   </body>
 </html>

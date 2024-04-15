@@ -21,3 +21,12 @@ function metadata_toggle(){
     }
 }
 
+function eval_log_toggle(){
+    var ele = document.getElementById('logs')
+    if (ele.style.display === 'block') {
+        ele.style.display = 'none';
+    } else {
+        ele.style.display = 'block';
+    }
+}
+

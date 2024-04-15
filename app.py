@@ -15,11 +15,20 @@ def Home_other():
 
 @app.route("/generate_synthetic_table", methods=["POST"])
 def submit_data():
-    data, synthetic_table, metadata, eval_reports, diag_reports = {}, {}, {}, {}, {}
+    data, synthetic_table, metadata, eval_reports, diag_reports = {}, None, None, None, None
+
+    model_dict = {
+        "clf1": "GaussianCopulaSynthesizer",
+        "clf2": "CopulaGanSynthesizer",
+        "clf3": "CTGanSynthesizer",
+        "clf4": "TVAESynthesizer",
+    }
     if request.method == 'POST':
         form_data = request.form
         table_type = form_data.get('table_type')
+        num_rows = int(form_data.get('select_num_rows'))
         data['table_type'] = table_type
+        data['num_rows'] = num_rows
         table_name = ''
         if table_type == 'single_table':
             table_name = form_data.get('table_single_selection')
@@ -28,12 +37,12 @@ def submit_data():
             demo_table = get_demo_table(table_type, table_name)
 
             # show synthetic generated table
-            synthetic_table, metadata = get_synthetic_table(table_type, table_name)
-            diag_reports = get_diag_reports(table_type, table_name)
-            eval_reports = get_eval_reports(table_type, table_name)
+            synthetic_table, metadata, selected_model, eval_logs, eval_reports = get_synthetic_table(table_type=table_type, table_name=table_name, num_rows=num_rows)
             
-            print(synthetic_table)
+            diag_reports = get_diag_reports(table_type, table_name)
 
+            data['model'] = model_dict[selected_model]
+            
             files = os.listdir('static')
             for f in files:
                 if f.endswith('.png'):
@@ -48,7 +57,7 @@ def submit_data():
             )
 
 
-            return render_template('index.html', type_table_name=data, demo_table=demo_table, synthetic_table=synthetic_table, metadata=metadata, diag_reports=diag_reports, eval_reports=eval_reports)
+            return render_template('index.html', data=data, demo_table=demo_table, synthetic_table=synthetic_table, metadata=metadata, diag_reports=diag_reports, eval_reports=eval_reports, eval_logs=eval_logs)
        
         else:
             table_name = form_data.get('table_multi_selection')
