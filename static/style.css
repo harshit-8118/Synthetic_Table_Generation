@@ -1,0 +1,18 @@
+*{
+    margin: 0;
+    padding: 0;
+    outline: none;
+    box-sizing: border-box;
+    color: rgb(22, 20, 20);
+}
+
+#table_type, #table_single_selection, 
+#table_multi_selection{
+    padding: 10px;
+    font-size: 18px;
+    border: 1px solid black;
+    position: relative;
+    option{
+        font-size: 15px;
+    }
+}
