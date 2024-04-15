@@ -26,6 +26,18 @@ body {
     text-align: center;
     margin-top: 50px;
     font-size: var(--bg-font);
+    position: relative;
+    a{
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: var(--xs-font);
+        cursor: pointer;
+        text-decoration: none;
+        color: blue;
+        border: 1px solid #FFF;
+        padding: 10px;
+    }
 }
 
 .table_selection_container {
@@ -259,7 +271,7 @@ body {
         height: max-content;
         background-color: #00246B;
         color: #FFF;
-        font-size: var(--xs-font);
+        font-size: 10px;
         overflow: scroll;
         margin: auto;
         padding: 30px;

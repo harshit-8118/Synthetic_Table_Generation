@@ -155,9 +155,9 @@ def get_synthetic_table(table_type, table_name, num_rows=10000):
 def get_diag_reports(table_type, table_name):
     if table_type == "single_table":
         diagnostic_report = run_diagnostic(
-            real_data, synthetic_generated_data, synthetic_metadata
+            real_data, synthetic_generated_data, synthetic_metadata, verbose=False
         )
-        score = diagnostic_report.get_score() * 100
+        score = diagnostic_report.get_score()
         diagnostic_report = diagnostic_report.get_info()
         diagnostic_report["score"] = score
         return diagnostic_report
@@ -168,7 +168,7 @@ def get_diag_reports(table_type, table_name):
 # show evaluation reports
 def get_eval_reports(table_type, table_name, data):
     if table_type == "single_table":
-        quality_report = evaluate_quality(real_data=real_data, synthetic_data=synthetic_generated_data, metadata=synthetic_metadata)
+        quality_report = evaluate_quality(real_data=real_data, synthetic_data=synthetic_generated_data, metadata=synthetic_metadata, verbose=False)
         details = quality_report.get_details(property_name="Column Shapes")
 
         return details.to_dict(orient="records")
