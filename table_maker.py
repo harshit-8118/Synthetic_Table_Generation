@@ -18,8 +18,9 @@ def parse_real_table(table_path):
     data = pd.read_csv(table_path)
     data = data.iloc[:1000, 1:]
     real_data = data
+    data = data.iloc[:5, :]
     data = data.to_dict(orient='records')
-    return data[:5]
+    return data
 
 
 def parse_real_tables(table_path, tables):

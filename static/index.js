@@ -12,3 +12,12 @@ function show_table_name_type(){
     }
 }
 
+function metadata_toggle(){
+    var ele = document.getElementById('metadata')
+    if (ele.style.display === 'block') {
+        ele.style.display = 'none';
+    } else {
+        ele.style.display = 'block';
+    }
+}
+

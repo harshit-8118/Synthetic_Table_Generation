@@ -32,6 +32,8 @@ def submit_data():
             diag_reports = get_diag_reports(table_type, table_name)
             eval_reports = get_eval_reports(table_type, table_name)
             
+            print(synthetic_table)
+
             files = os.listdir('static')
             for f in files:
                 if f.endswith('.png'):
