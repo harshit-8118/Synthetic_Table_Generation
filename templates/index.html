@@ -36,20 +36,19 @@
           <option value="world_v1">world_v1</option>
         </select>
         <select name="select_num_rows" id="select_num_rows">
-          <option value=100 selected>Rows amount</option>
-          <option value=100>100</option>
-          <option value=500>500</option>
-          <option value=1000>1000</option>
-          <option value=2000>2000</option>
-          <option value=10000>10000</option>
+          <option value="100" selected>Rows amount</option>
+          <option value="100">100</option>
+          <option value="500">500</option>
+          <option value="1000">1000</option>
+          <option value="2000">2000</option>
+          <option value="10000">10000</option>
         </select>
         <input type="submit" value="SUBMIT" />
       </form>
     </div>
 
     <div class="demo_tables">
-      {% if data and demo_table and data['table_type'] ==
-      'single_table' %}
+      {% if data and demo_table and data['table_type'] == 'single_table' %}
 
       <h2 class="table-type">Real Table</h2>
       <h2 class="heading-h2">{{data['table_name']}}.csv</h2>
@@ -75,8 +74,7 @@
           </tbody>
         </table>
       </div>
-      {% elif data and demo_table and data['table_type']
-      == 'multi_table' %}
+      {% elif data and demo_table and data['table_type'] == 'multi_table' %}
       <h2 class="table-type">Multi Table</h2>
       {% for table in demo_table.keys() %}
       <h2 class="heading-h2">{{ table }}</h2>
@@ -106,8 +104,7 @@
     </div>
 
     <div class="synthetic_tables_container">
-      {% if data and synthetic_table and
-      data['table_type'] == 'single_table' %}
+      {% if data and synthetic_table and data['table_type'] == 'single_table' %}
       <h2 class="table-type">Synthetic Generated Table</h2>
       <h2 class="heading-h2">{{data['table_name']}}.csv</h2>
       <div class="synthetic_table_single">
@@ -135,8 +132,8 @@
           </tbody>
         </table>
       </div>
-      {% elif data and synthetic_table and
-      data['table_type'] == 'multi_table' %}
+      {% elif data and synthetic_table and data['table_type'] == 'multi_table'
+      %}
       <div class="synthetic_table_multi"></div>
       {% endif %}
     </div>
@@ -150,7 +147,7 @@
         {% endfor %}
       </div>
       {% endif %}
-    </div>  
+    </div>
     {% if metadata %}
     <button class="metadata-btn" onclick="metadata_toggle()">
       METADATA

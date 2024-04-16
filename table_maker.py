@@ -120,7 +120,7 @@ def get_synthetic_table(table_type, table_name, num_rows=10000):
             data["clf4"] = {"metadata": clf4.get_metadata(), "data": clf4_data}
         except:
             pass
-        
+
         score = 0.0
         for k, v in data.items():
             print(k)
@@ -129,7 +129,7 @@ def get_synthetic_table(table_type, table_name, num_rows=10000):
                     real_data=real_data,
                     synthetic_data=v["data"],
                     metadata=v["metadata"],
-                    verbose=False
+                    verbose=False,
                 )
                 details = quality_report.get_details(property_name="Column Shapes")
                 details_dict = details.to_dict(orient="records")
@@ -145,7 +145,7 @@ def get_synthetic_table(table_type, table_name, num_rows=10000):
                     selected_model = k
             except:
                 pass
-                
+
         clf_data = parse_synthetic_table(synthetic_generated_data)
         eval_report = get_eval_reports(table_type, table_name, data)
         return clf_data, synthetic_metadata, selected_model, logs, eval_report
@@ -168,7 +168,12 @@ def get_diag_reports(table_type, table_name):
 # show evaluation reports
 def get_eval_reports(table_type, table_name, data):
     if table_type == "single_table":
-        quality_report = evaluate_quality(real_data=real_data, synthetic_data=synthetic_generated_data, metadata=synthetic_metadata, verbose=False)
+        quality_report = evaluate_quality(
+            real_data=real_data,
+            synthetic_data=synthetic_generated_data,
+            metadata=synthetic_metadata,
+            verbose=False,
+        )
         details = quality_report.get_details(property_name="Column Shapes")
 
         return details.to_dict(orient="records")
