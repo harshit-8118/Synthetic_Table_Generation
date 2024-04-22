@@ -17,6 +17,12 @@ from sdv.single_table import (
     TVAESynthesizer,
 )
 from sdv.multi_table import HMASynthesizer
+from sdv.evaluation.multi_table import (
+    evaluate_quality as evaluate_quality_multitable,
+    QualityReport as QualityReportMultitable,
+    get_column_plot as get_column_plot_multitable,
+    run_diagnostic as run_diagnostic_multitable,
+)
 import os
 import numpy as np
 import warnings
@@ -79,10 +85,11 @@ def parse_synthetic_table(syn_data):
     syn_data = syn_data.to_dict(orient="records")
     return syn_data
 
+
 def parse_synthetic_multi_table(syn_data):
     for k, v in syn_data.items():
         dv = v.iloc[:5, 1:]
-        syn_data[k] = dv.to_dict(orient='records')
+        syn_data[k] = dv.to_dict(orient="records")
     return syn_data
 
 
@@ -161,12 +168,10 @@ def get_synthetic_table(table_type, table_name, num_rows=10000):
                 pass
 
         clf_data = parse_synthetic_table(synthetic_generated_data)
-        eval_report = get_eval_reports(table_type, table_name, data)
+        eval_report = get_eval_reports(table_type, table_name)
         return clf_data, synthetic_metadata, selected_model, logs, eval_report
     else:
-        trf_HMA_path = (
-            f"SDV_trained_file_multi_table\{table_name}.pkl"
-        )
+        trf_HMA_path = f"SDV_trained_file_multi_table\{table_name}.pkl"
 
         data = {}
 
@@ -176,9 +181,9 @@ def get_synthetic_table(table_type, table_name, num_rows=10000):
             data["clf_hma"] = {"metadata": clf_hma.get_metadata(), "data": clf_data}
         except:
             pass
-        
-        synthetic_generated_data = data['clf_hma']['data']
-        synthetic_metadata = data['clf_hma']['metadata']
+
+        synthetic_generated_data = data["clf_hma"]["data"]
+        synthetic_metadata = data["clf_hma"]["metadata"]
 
         clf_data = parse_synthetic_multi_table(synthetic_generated_data)
         return clf_data, synthetic_metadata
@@ -197,7 +202,8 @@ def get_diag_reports(table_type, table_name):
 
 
 # show evaluation reports
-def get_eval_reports(table_type, table_name, data):
+def get_eval_reports(table_type, table_name):
+    global real_data, synthetic_generated_data, synthetic_metadata
     if table_type == "single_table":
         quality_report = evaluate_quality(
             real_data=real_data,
@@ -213,16 +219,21 @@ def get_eval_reports(table_type, table_name, data):
         pass
 
 
-def get_evaluation_graphs():
-    categories = ['boolean', 'categorical', 'datetime', 'numerical']
+def get_evaluation_graphs(table_type, table_name):
+    categories = ["boolean", "categorical", "datetime", "numerical"]
+    graph_path = []
+    if table_name in ['student_placements', 'student_placements_pii']:
+        return None
+    
     for k, v in synthetic_metadata.columns.items():
-        if v['sdtype'] in categories:
+        if v["sdtype"] in categories:
             fig = get_column_plot(
                 real_data=real_data,
                 synthetic_data=synthetic_generated_data,
                 metadata=synthetic_metadata,
                 column_name=k,
             )
-            fig.show()
-            
-        
+            # fig.show()
+            graph_path.append(fig)
+
+    return graph_path

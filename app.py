@@ -75,7 +75,8 @@ def submit_data():
                 show_table_details="full",
                 output_filepath="./static/my_metadata_full.png",
             )
-            get_evaluation_graphs()
+            graph_path = get_evaluation_graphs(table_type, table_name)
+
             return render_template(
                 "index.html",
                 data=data,
@@ -85,6 +86,7 @@ def submit_data():
                 diag_reports=diag_reports,
                 eval_reports=eval_reports,
                 eval_logs=eval_logs,
+                graph_path=graph_path
             )
 
         else:
@@ -99,7 +101,7 @@ def submit_data():
                     table_type=table_type, table_name=table_name, num_rows=num_rows
                 )
             )
-
+            get_eval_reports(table_type=table_type, table_name=table_name)
             # diag_reports = get_diag_reports(table_type, table_name)
 
 
