@@ -5,10 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Synthetic Table Generation</title>
     <link rel="stylesheet" href="static/style.css" />
+
+    <style>
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+      .gap{
+        margin-top: 40px;
+        .circup{
+          margin: 0 auto;
+          width: 40px;
+          height: 40px;
+          background-color: rgb(248, 194, 13);
+        }
+        .gapline{
+          width: 100%;
+          height: 1px;
+          color: black;
+          background-color: rgb(35, 173, 157);
+        }
+        .circdown{
+          width: 40px;
+          height: 40px;
+          margin: 0 auto;
+          background-color: rgb(247, 218, 124);
+          
+        }
+      }
+    </style>
   </head>
   <body>
+    <a href="/home" class="home">Home</a>
     <div class="main_header">
-      <a href="/home">Home</a>
       <h1 class="main_heading">Synthetic Table Generation</h1>
     </div>
     <div class="table_selection_container">
@@ -46,13 +87,13 @@
         <input type="submit" value="SUBMIT" />
       </form>
     </div>
-
+    {% if data and demo_table %}
     <div class="demo_tables">
-      {% if data and demo_table and data['table_type'] == 'single_table' %}
+      {% if data['table_type'] == 'single_table' %}
 
-      <h2 class="table-type">Real Table</h2>
-      <h2 class="heading-h2">{{data['table_name']}}.csv</h2>
+      <h2 class="table-type">REAL TABLE</h2>
       <div class="demo_table_single">
+        <h2 class="heading-h2">{{data['table_name']}}.csv</h2>
         <table class="demo_table">
           <thead>
             <tr>
@@ -74,8 +115,8 @@
           </tbody>
         </table>
       </div>
-      {% elif data and demo_table and data['table_type'] == 'multi_table' %}
-      <h2 class="table-type">Multi Table</h2>
+      {% elif data['table_type'] == 'multi_table' %}
+      <h2 class="table-type">REAL MULTI TABLE</h2>
       {% for table in demo_table.keys() %}
       <h2 class="heading-h2">{{ table }}</h2>
       <div class="demo_table_multi">
@@ -102,12 +143,21 @@
       </div>
       {% endfor %} {% endif %}
     </div>
-
+    {% endif %}
+    {% if data %}
+    <div class="gap">
+      <div class="circup"></div>
+      <div class="gapline">  
+      </div>
+      <div class="circdown"></div>
+    </div>
+    {% endif %}
+    {% if data and synthetic_table %}
     <div class="synthetic_tables_container">
-      {% if data and synthetic_table and data['table_type'] == 'single_table' %}
-      <h2 class="table-type">Synthetic Generated Table</h2>
-      <h2 class="heading-h2">{{data['table_name']}}.csv</h2>
+      {% if data['table_type'] == 'single_table' %}
+      <h2 class="table-type">SYNTHETIC GENERATED TABLE</h2>
       <div class="synthetic_table_single">
+        <h2 class="heading-h2">{{data['table_name']}}.csv</h2>
         <table border="1" class="synthetic_table">
           <thead>
             <thead>
@@ -132,12 +182,39 @@
           </tbody>
         </table>
       </div>
-      {% elif data and synthetic_table and data['table_type'] == 'multi_table'
+      {% elif data['table_type'] == 'multi_table'
       %}
-      <div class="synthetic_table_multi"></div>
+      <h2 class="table-type">SYNTHETIC GENERATED MULTI TABLE</h2>
+      <div class="synthetic_table_multi">
+        {% for table in synthetic_table.keys() %}
+        <h2 class="heading-h2">{{ table }}.csv</h2>
+        <div class="synthetic_table_multi">
+          <table class="synthetic_table">
+            <thead>
+              <tr>
+                {% for k in synthetic_table[table][0].keys() %}
+                <th>{{k}}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in synthetic_table[table] %}
+              <tr>
+                {% for v in i.values() %}
+                <td>
+                  {{ v }}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endfor %}
+      </div>
       {% endif %}
     </div>
-
+    {% endif %}
     <div id="evaluation_logs">
       {% if eval_logs %}
       <button id="eval-logs-btn" onclick="eval_log_toggle()">LOGS</button>
@@ -148,6 +225,7 @@
       </div>
       {% endif %}
     </div>
+
     {% if metadata %}
     <button class="metadata-btn" onclick="metadata_toggle()">
       METADATA
@@ -161,9 +239,10 @@
       </div>
       {%endif%}
     </div>
+
     <div class="evaluation_reports">
       {% if eval_reports %}
-      <h2 class="table-type">Evaluation Report</h2>
+      <h2 class="table-type">EVALUATION REPORT</h2>
       <h2 class="heading-h2">Best Synthesizer: {{ data['model'] }}</h2>
       <table border="1" class="eval_reports">
         <thead>
@@ -187,6 +266,14 @@
       </table>
       {%endif%}
     </div>
+    {% if data %}
+    <div class="gap">
+      <div class="circup"></div>
+      <div class="gapline">  
+      </div>
+      <div class="circdown"></div>
+    </div>
+    {% endif %}
     <div class="diagnostic_reports">
       {% if diag_reports %}
       <h2 class="table-type">Diagnostic Report</h2>
@@ -199,6 +286,15 @@
         {% endfor %}
       </table>
       {%endif%}
+    </div>
+
+    <div class="footer">
+      <div class="footer-line-1">
+        <span>&copy; <span>SYNTHETIC TABLE GENERATOR</span></span>
+      </div>
+      <div class="footer-line-2">
+        <p>MAJOR PROJECT</p>
+      </div>
     </div>
     <script src="static/index.js"></script>
   </body>

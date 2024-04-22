@@ -4,6 +4,7 @@ from table_maker import (
     get_synthetic_table,
     get_eval_reports,
     get_diag_reports,
+    get_evaluation_graphs
 )
 import os
 
@@ -23,12 +24,13 @@ def Home_other():
 
 @app.route("/generate_synthetic_table", methods=["POST"])
 def submit_data():
-    data, synthetic_table, metadata, eval_reports, diag_reports = (
+    data, synthetic_table, metadata, eval_reports, diag_reports, eval_logs = (
         {},
         None,
         None,
         None,
         None,
+        None
     )
 
     model_dict = {
@@ -73,7 +75,7 @@ def submit_data():
                 show_table_details="full",
                 output_filepath="./static/my_metadata_full.png",
             )
-
+            get_evaluation_graphs()
             return render_template(
                 "index.html",
                 data=data,
@@ -88,19 +90,34 @@ def submit_data():
         else:
             table_name = form_data.get("table_multi_selection")
             data["table_name"] = table_name
+            # show demo table
             demo_table = get_demo_table(table_type, table_name)
 
-        # show reports
+            # show synthetic generated table
+            synthetic_table, metadata = (
+                get_synthetic_table(
+                    table_type=table_type, table_name=table_name, num_rows=num_rows
+                )
+            )
 
-    return render_template(
-        "index.html",
-        type_table_name=data,
-        demo_table=demo_table,
-        synthetic_table=synthetic_table,
-        metadata=metadata,
-        diag_reports=diag_reports,
-        eval_reports=eval_reports,
-    )
+            # diag_reports = get_diag_reports(table_type, table_name)
+
+
+            files = os.listdir("static")
+            for f in files:
+                if f.endswith(".png"):
+                    os.remove(os.path.join("static", f))
+            metadata.visualize(
+                show_table_details="summarized",
+                output_filepath="./static/my_metadata_summarized.png",
+            )
+            metadata.visualize(
+                show_table_details="full",
+                output_filepath="./static/my_metadata_full.png",
+            )
+
+        # show reports
+            return render_template('index.html', data=data, demo_table=demo_table, synthetic_table=synthetic_table, metadata=metadata, diag_reports=diag_reports, eval_reports=eval_reports, eval_logs=eval_logs)
 
 
 if __name__ == "__main__":

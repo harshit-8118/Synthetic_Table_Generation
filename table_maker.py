@@ -16,6 +16,7 @@ from sdv.single_table import (
     CTGANSynthesizer,
     TVAESynthesizer,
 )
+from sdv.multi_table import HMASynthesizer
 import os
 import numpy as np
 import warnings
@@ -47,11 +48,18 @@ def parse_real_table(table_path):
 def parse_real_tables(table_path, tables):
     global real_data
     data = {}
+    org_data = {}
     for table in tables:
-        table_content = parse_real_table(os.path.join(table_path, table))
-        data[table] = table_content
+        tab_path = os.path.join(table_path, table)
+        df = pd.read_csv(tab_path)
+        df = df.iloc[:, 1:]
+        org_tab = df
+        df = df.iloc[:5, :]
+        df = df.to_dict(orient="records")
+        org_data[table] = org_tab
+        data[table] = df
 
-    real_data = data
+    real_data = org_data
     return data
 
 
@@ -69,6 +77,12 @@ def get_demo_table(table_type, table_name):
 def parse_synthetic_table(syn_data):
     syn_data = syn_data.iloc[:5, :]
     syn_data = syn_data.to_dict(orient="records")
+    return syn_data
+
+def parse_synthetic_multi_table(syn_data):
+    for k, v in syn_data.items():
+        dv = v.iloc[:5, 1:]
+        syn_data[k] = dv.to_dict(orient='records')
     return syn_data
 
 
@@ -149,6 +163,25 @@ def get_synthetic_table(table_type, table_name, num_rows=10000):
         clf_data = parse_synthetic_table(synthetic_generated_data)
         eval_report = get_eval_reports(table_type, table_name, data)
         return clf_data, synthetic_metadata, selected_model, logs, eval_report
+    else:
+        trf_HMA_path = (
+            f"SDV_trained_file_multi_table\{table_name}.pkl"
+        )
+
+        data = {}
+
+        try:
+            clf_hma = HMASynthesizer.load(trf_HMA_path)
+            clf_data = clf_hma.sample(scale=0.6)
+            data["clf_hma"] = {"metadata": clf_hma.get_metadata(), "data": clf_data}
+        except:
+            pass
+        
+        synthetic_generated_data = data['clf_hma']['data']
+        synthetic_metadata = data['clf_hma']['metadata']
+
+        clf_data = parse_synthetic_multi_table(synthetic_generated_data)
+        return clf_data, synthetic_metadata
 
 
 # show diagnostic reports
@@ -157,9 +190,7 @@ def get_diag_reports(table_type, table_name):
         diagnostic_report = run_diagnostic(
             real_data, synthetic_generated_data, synthetic_metadata, verbose=False
         )
-        score = diagnostic_report.get_score()
         diagnostic_report = diagnostic_report.get_info()
-        diagnostic_report["score"] = score
         return diagnostic_report
     else:
         pass
@@ -175,7 +206,23 @@ def get_eval_reports(table_type, table_name, data):
             verbose=False,
         )
         details = quality_report.get_details(property_name="Column Shapes")
+        score = quality_report.get_score()
 
         return details.to_dict(orient="records")
     else:
         pass
+
+
+def get_evaluation_graphs():
+    categories = ['boolean', 'categorical', 'datetime', 'numerical']
+    for k, v in synthetic_metadata.columns.items():
+        if v['sdtype'] in categories:
+            fig = get_column_plot(
+                real_data=real_data,
+                synthetic_data=synthetic_generated_data,
+                metadata=synthetic_metadata,
+                column_name=k,
+            )
+            fig.show()
+            
+        
