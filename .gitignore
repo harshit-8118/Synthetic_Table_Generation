@@ -1,0 +1,5 @@
+static/*.png
+SDV_reports_single_table/*
+SDV_reports_multi_table/*
+__pycache__/
+*.pyc
