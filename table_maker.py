@@ -1,12 +1,9 @@
-import sdv
-import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
 from sdv.evaluation.single_table import (
-    QualityReport,
-    DiagnosticReport,
+    # QualityReport,
+    # DiagnosticReport,
+    # get_column_pair_plot,
     evaluate_quality,
-    get_column_pair_plot,
     get_column_plot,
     run_diagnostic,
 )
@@ -17,14 +14,7 @@ from sdv.single_table import (
     TVAESynthesizer,
 )
 from sdv.multi_table import HMASynthesizer
-from sdv.evaluation.multi_table import (
-    evaluate_quality as evaluate_quality_multitable,
-    QualityReport as QualityReportMultitable,
-    get_column_plot as get_column_plot_multitable,
-    run_diagnostic as run_diagnostic_multitable,
-)
 import os
-import numpy as np
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -40,6 +30,12 @@ model_dict = {
     "clf4": "TVAESynthesizer",
 }
 
+"""
+parsing real single table
+function->parse_real_table(table_path)
+table: table_name.csv
+"""
+
 
 def parse_real_table(table_path):
     global real_data
@@ -49,6 +45,14 @@ def parse_real_table(table_path):
     data = data.iloc[:5, :]
     data = data.to_dict(orient="records")
     return data
+
+
+"""
+parsing multitable
+function->parse_real_tables(table_path, tables)
+table: table_name.csv
+tables: [table_name1, table_name2 ... table_name3]
+"""
 
 
 def parse_real_tables(table_path, tables):
@@ -69,7 +73,13 @@ def parse_real_tables(table_path, tables):
     return data
 
 
-# show demo table
+"""
+get_demo_table(table_type, table_name)
+table_type: single_table | multi_table
+table_name: table_name
+"""
+
+
 def get_demo_table(table_type, table_name):
     if table_type == "single_table":
         table_path = f"SDV_single_table_demos\{table_name}.csv"
@@ -80,21 +90,45 @@ def get_demo_table(table_type, table_name):
         return parse_real_tables(table_path, tables)
 
 
+"""
+function->parse_synthetic_table(syn_data)
+slicing top five synthetic records to show
+"""
+
+
 def parse_synthetic_table(syn_data):
     syn_data = syn_data.iloc[:5, :]
     syn_data = syn_data.to_dict(orient="records")
     return syn_data
 
 
+"""
+function->parse_synthetic_multi_table(syn_data)
+slicing top five synthetic records from multiple table to show
+"""
+
+
 def parse_synthetic_multi_table(syn_data):
     for k, v in syn_data.items():
-        dv = v.iloc[:5, 1:]
+        dv = v.iloc[:5, :]
         syn_data[k] = dv.to_dict(orient="records")
     return syn_data
 
 
-# show synthetic generated table
-def get_synthetic_table(table_type, table_name, num_rows=10000):
+"""
+get_synthetic_table(table_type, table_name, num_rows=1000):
+table_type: single_table | multi_table
+table_name: table_name
+num_rows: amount of records to be obtained
+working: 
+    for single_table:
+        read        
+    for multi_table: 
+        read
+"""
+
+
+def get_synthetic_table(table_type, table_name, num_rows=1000):
     global synthetic_generated_data, synthetic_metadata, selected_model
 
     if table_type == "single_table":
@@ -143,7 +177,7 @@ def get_synthetic_table(table_type, table_name, num_rows=10000):
             pass
 
         score = 0.0
-        for k, v in data.items():
+        for k, v in data.items():  # evaluating report for different model
             print(k)
             try:
                 quality_report = evaluate_quality(
@@ -182,6 +216,7 @@ def get_synthetic_table(table_type, table_name, num_rows=10000):
         except:
             pass
 
+        print("clf_hma")
         synthetic_generated_data = data["clf_hma"]["data"]
         synthetic_metadata = data["clf_hma"]["metadata"]
 
@@ -222,9 +257,9 @@ def get_eval_reports(table_type, table_name):
 def get_evaluation_graphs(table_type, table_name):
     categories = ["boolean", "categorical", "datetime", "numerical"]
     graph_path = []
-    if table_name in ['student_placements', 'student_placements_pii']:
+    if table_name in ["student_placements", "student_placements_pii"]:
         return None
-    
+
     for k, v in synthetic_metadata.columns.items():
         if v["sdtype"] in categories:
             fig = get_column_plot(

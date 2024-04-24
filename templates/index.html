@@ -282,15 +282,13 @@
       {%endif%}
     </div>
     <div class="hidden" style="display: hidden;">
-      {% if data and graph_path and data['table_name'] not in ['student_placements'] %}
-      {% for path in graph_path %}
-      {{ path.show() }}
-      {% endfor %}
-      {% endif %}
+      {% if data and graph_path %} {% for path in graph_path %}
+      <span style="display: hidden;">{{ path.show() }}</span>
+      {% endfor %} {% endif %}
     </div>
 
-
     <div class="footer">
+      <button id="gototop" onclick="gototop()">^</button>
       <div class="footer-line-1">
         <span>&copy; <span>SYNTHETIC TABLE GENERATOR</span></span>
       </div>

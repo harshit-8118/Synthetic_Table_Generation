@@ -29,3 +29,10 @@ function eval_log_toggle() {
     ele.style.display = "block";
   }
 }
+
+function gototop() {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}
